@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import joblib
 import re
@@ -300,71 +301,33 @@ class EmailAnalyzer:
             'feature_weights': feature_weights
         }
 
-# Test function
-def test_analyzer():
-    """Test the analyzer with sample emails"""
-    
+
+def convert_numpy(obj):
+    """
+    Recursively convert numpy data types to native Python types for JSON serialization.
+    Handles dictionaries, lists, and numpy arrays/scalars.
+    """
+    if isinstance(obj, dict):
+        return {key: convert_numpy(value) for key, value in obj.items()}
+    elif isinstance(obj, (list, tuple)):
+        return [convert_numpy(item) for item in obj]
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif hasattr(np, 'bool_') and isinstance(obj, np.bool_):
+        return bool(obj)
+    elif hasattr(np, 'int64') and isinstance(obj, (np.int64, np.int32, np.int16, np.int8, np.uint64, np.uint32, np.uint16, np.uint8)):
+        return int(obj)
+    elif hasattr(np, 'float64') and isinstance(obj, (np.float64, np.float32, np.float16)):
+        return float(obj)
+    elif (hasattr(np, 'str_') and isinstance(obj, np.str_)) or (hasattr(np, 'bytes_') and isinstance(obj, np.bytes_)):
+        return str(obj)
+    elif obj is None or isinstance(obj, (str, int, float, bool)):
+        return obj
+    else:
+        # Try to convert to string as a last resort
+        return str(obj)
+
+def analyzeEmail(phishing_email):
     analyzer = EmailAnalyzer()
-    
-    # Test email 1: Suspicious phishing email
-    phishing_email = """From: security-alert@paypal-verify.tk
-To: user@example.com
-Subject: URGENT: Your PayPal Account Will Be Suspended
-Date: Mon, 1 Jan 2024 10:00:00 +0000
-
-Your PayPal account has been temporarily suspended due to suspicious activity.
-
-Click here immediately to verify your account: http://paypal-verify.tk/urgent-verify
-You have 24 hours to complete verification or your account will be permanently closed.
-
-Act now to avoid losing access to your funds!
-
-PayPal Security Team
-"""
-
-    # Test email 2: Legitimate email
-    legitimate_email = """From: notifications@github.com
-To: developer@company.com
-Subject: Pull request merged in your repository
-Date: Mon, 1 Jan 2024 15:30:00 +0000
-
-Your pull request #123 has been successfully merged into the main branch.
-
-Repository: myproject/backend
-Merged by: teammate@company.com
-
-View the changes: https://github.com/myproject/backend/pull/123
-
-Best regards,
-GitHub Team
-"""
-
-    print("=== ANALYZING SUSPICIOUS EMAIL ===")
-    result1 = analyzer.analyze_email(phishing_email)
-    print_analysis_result(result1)
-    
-    print("\n" + "="*50 + "\n")
-    
-    print("=== ANALYZING LEGITIMATE EMAIL ===")
-    result2 = analyzer.analyze_email(legitimate_email)
-    print_analysis_result(result2)
-
-def print_analysis_result(result):
-    """Pretty print the analysis result"""
-    print(f"🎯 RISK SCORE: {result['risk_score']}%")
-    print(f"📊 CATEGORY: {result['category']}")
-    print(f"💡 RECOMMENDATION: {result['recommendation']}")
-    print(f"🔍 CONFIDENCE: {result['confidence']:.2f}")
-    
-    print(f"\n📧 EMAIL DETAILS:")
-    print(f"   Sender: {result['email_details']['sender']}")
-    print(f"   Subject: {result['email_details']['subject']}")
-    print(f"   Contains URLs: {'Yes' if result['email_details']['has_urls'] else 'No'}")
-    print(f"   URL Count: {result['email_details']['url_count']}")
-    
-    print(f"\n🔧 TECHNICAL FEATURES:")
-    for feature, value in result['features_detected'].items():
-        print(f"   {feature}: {value}")
-
-if __name__ == "__main__":
-    test_analyzer()
+    result = analyzer.analyze_email(phishing_email)
+    return convert_numpy(result)
