@@ -9,7 +9,7 @@ A machine learning-based system to detect phishing emails.
 - Real-time email analysis
 - Comprehensive feature extraction
 
-## Setup
+## Quick Start
 
 1. Clone the repository:
 ```bash
@@ -17,9 +17,12 @@ git clone <your-repo-url>
 cd EMAIL-PHISHING
 ```
 
-2. Create a virtual environment:
+2. Create and activate virtual environment:
 ```bash
+# Create virtual environment
 python -m venv venv
+
+# Activate virtual environment
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
@@ -28,27 +31,38 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+4. Analyze emails:
+```bash
+python email_analyzer.py
+```
+
 ## Project Structure
 
-- `train_model.py`: Training script for the phishing detection model
+- `train_model.py`: Training script for the phishing detection model (optional)
 - `email_analyzer.py`: Main email analysis application
 - `analyze_my_email.py`: Example script for analyzing emails
-- `emails.csv`: Main dataset
-- `spam-emails.csv`: Spam dataset
-- `phishing_model.pkl`: Trained model (generated after training)
+- `phishing_model.pkl`: Pre-trained model for email analysis
 - `feature_names.pkl`: Feature names used in the model
 
 ## Usage
 
-1. Train the model:
-```bash
-python train_model.py
-```
+1. Email Analysis (Recommended):
+   - The project comes with a pre-trained model
+   - Simply run `python email_analyzer.py`
+   - The script will analyze emails and provide detailed reports
 
-2. Analyze emails:
-```bash
-python email_analyzer.py
-```
+2. Model Training (Optional):
+   - If you want to train your own model:
+     - Download the required datasets
+     - Run `python train_model.py`
+     - The new model will be saved as `phishing_model.pkl`
+
+## Notes
+
+- The project comes with a pre-trained model, so training is optional
+- You can start analyzing emails immediately after setup
+- Training is only needed if you want to customize the model
+- The pre-trained model has been tested and optimized
 
 ## Contributing
 
@@ -61,3 +75,10 @@ python email_analyzer.py
 ## License
 
 MIT License
+
+## Notes
+
+- The CSV files are not included in the repository due to their size
+- You must download the datasets separately to train the model
+- The model will only work after proper training with the datasets
+- Ensure you have sufficient disk space for the datasets and model files
